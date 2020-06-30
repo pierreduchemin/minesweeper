@@ -4,6 +4,7 @@ import React, { type Node } from 'react';
 import { View, Text, Image, ScrollView } from "react-native";
 import { shownTypes, hiddenTypes } from '../types/minesweeper';
 import type { Square } from '../types/minesweeper';
+import { connect } from 'react-redux';
 
 export type Props = {
   square: Square,
