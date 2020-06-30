@@ -1,7 +1,7 @@
 // @flow
 
 import React, { type Node } from 'react';
-import { View, StyleSheet, Dimensions } from "react-native";
+import { Text, View, StyleSheet, Dimensions } from "react-native";
 import { connect } from 'react-redux';
 import { shownTypes, hiddenTypes, type Board, type Square } from '../types/minesweeper';
 import board from '../reducers/minesweeper';
@@ -23,7 +23,7 @@ const getRow = (board: Board, rowIndex: number) => {
     if (item.shownType === shownTypes.mine)
       content.push(<View key={"s" + (rowIndex * board.size + content.length)} style={getStyles(deviceWidth / board.squares.length).mineSquare} />);
     else
-      content.push(<View key={"s" + (rowIndex * board.size + content.length)} style={getStyles(deviceWidth / board.squares.length).emptySquare} />);
+      content.push(<View key={"s" + (rowIndex * board.size + content.length)} style={getStyles(deviceWidth / board.squares.length).emptySquare}><Text>{item.value}</Text></View>);
   }
   return content;
 };
