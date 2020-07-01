@@ -2,13 +2,9 @@
 
 import React, { type Node, Component } from 'react';
 import { TouchableOpacity, View, Text, Image, StyleSheet, Dimensions, ScrollView } from "react-native";
-import { Square, SHOWN_TYPES, HIDDEN_TYPES, Board } from '../types/minesweeper';
-import { BOARD_SIZE } from '../types/minesweeper';
-import { CLICK } from '../actions/actionTypes';
-import { connect } from 'react-redux';
-import Icon from '../assets/mine.js';
-
 import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+import { Square, SHOWN_TYPES, HIDDEN_TYPES, BOARD_SIZE, Board } from '../types/minesweeper';
 import * as actions from '../actions/actions';
 import * as types from '../actions/actionTypes';
 
@@ -27,16 +23,19 @@ export type State = {
 class SquareC extends Component<Props, State> {
 
   render = () => {
-    const { square } = this.props;
+    const { square, actions } = this.props;
 
     // hidden by default
-    let result = <TouchableOpacity activeOpacity = { .5 } onPress={ () => this.props.actions.clickAction(square.x, square.y) }>
+    let result = <TouchableOpacity
+        activeOpacity = { .5 }
+        onPress={ () => actions.clickAction(square.x, square.y) }
+        onLongPress={ () => actions.toggleFlagAction(square.x, square.y) }>
       <View style={getStyles(deviceWidth / BOARD_SIZE).hiddenSquare} />
     </TouchableOpacity>;
 
     if (square.hidden) {
       if (square.hiddenType === HIDDEN_TYPES.flag) {
-        result = <View style={getStyles(deviceWidth / BOARD_SIZE).hiddenSquare} />;
+        result = <View style={getStyles(deviceWidth / BOARD_SIZE).flagSquare} />;
       }
     } else {
       if (square.shownType === SHOWN_TYPES.empty) {
@@ -58,6 +57,14 @@ const getStyles = (squareWidth: number) => {
       width: squareWidth, 
       height: squareWidth, 
       backgroundColor: 'darkgrey', 
+      borderColor: 'grey',
+      borderWidth: 2,
+      justifyContent: 'center',
+    },
+    flagSquare: {
+      width: squareWidth, 
+      height: squareWidth, 
+      backgroundColor: 'yellow', 
       borderColor: 'grey',
       borderWidth: 2,
       justifyContent: 'center',

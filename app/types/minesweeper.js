@@ -13,7 +13,7 @@ const isValid = (x: number, y: number): boolean => {
 export class Square {
     +x: number;
     +y: number;
-    +hiddenType: number;
+    hiddenType: number;
     shownType: number;
     value: number;
     hidden: boolean;
