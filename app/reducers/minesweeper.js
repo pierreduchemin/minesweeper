@@ -1,6 +1,6 @@
 // @flow
 
-import { HIDDEN_TYPES, SHOWN_TYPES, BOARD_SIZE, N_MINES, Board, Square } from '../types/minesweeper';
+import { HIDDEN_TYPES, SHOWN_TYPES, BOARD_SIZE, N_MINES, Board, Square, STATUS_TYPES } from '../types/minesweeper';
 import { create } from 'react-test-renderer';
 import { INIT, IDLE, CLICK } from '../actions/actionTypes';
 import { combineReducers } from 'redux';
@@ -45,7 +45,14 @@ const click = (board: Board, x: number, y: number): Board => {
     unhide(board, x, y);
   }
 
-  // todo: check lost/won
+  if (board.squares[x][y].shownType === SHOWN_TYPES.mine) {
+    board.status = STATUS_TYPES.lost;
+    board.reveal();
+  }
+  if (board.getRemaining().length === N_MINES) {
+    board.status = STATUS_TYPES.won;
+    board.reveal();
+  }
 
   return board;
 };
@@ -64,10 +71,9 @@ const unhide = (board: Board, x: number, y: number) => {
 
 export type State = {
   board: Board,
-  currentSquare: Square,
 };
 
-const boardReducer = (state: State = { board: init(), currentSquare: {} }, action: Object): Object => {
+const boardReducer = (state: State = { board: init() }, action: Object): Object => {
   switch (action.type) {
     case INIT:
       return {
@@ -83,12 +89,6 @@ const boardReducer = (state: State = { board: init(), currentSquare: {} }, actio
       };
 /*    case 'FLAG':
       return addFlag(state, x, y);
-    case 'NO_MINE':
-      return state;
-    case 'LOST':
-      return displayLost();
-    case 'WON':
-      return displayWon();
 */  default:
       return state;
   }

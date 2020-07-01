@@ -25,9 +25,10 @@ export type State = {
 };
 
 class SquareC extends Component<Props, State> {
-  
+
   render = () => {
     const { square } = this.props;
+
     // hidden by default
     let result = <TouchableOpacity activeOpacity = { .5 } onPress={ () => this.props.actions.clickAction(square.x, square.y) }>
       <View style={getStyles(deviceWidth / BOARD_SIZE).hiddenSquare} />
@@ -81,7 +82,6 @@ const getStyles = (squareWidth: number) => {
 
 const mapStateToProps = (state, props) => {
   return {
-    board: state.board,
     currentSquare: state.currentSquare,
   };
 };
