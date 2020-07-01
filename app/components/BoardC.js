@@ -3,13 +3,17 @@
 import React, { type Node, Component } from 'react';
 import { Text, View, StyleSheet, Dimensions } from "react-native";
 import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import { type Board, type Square, STATUS_TYPES } from '../types/minesweeper';
 import SquareC from './SquareC';
+import Popup from './Popup';
+import * as actions from '../actions/actions';
 import board from '../reducers/minesweeper';
 
 export type Props = {
   board: Board,
   status: number,
+  actions: Object,
 };
 
 class BoardC extends Component<Props> {
@@ -32,18 +36,25 @@ class BoardC extends Component<Props> {
   };
 
   render = () => {
-    if (this.props.status === STATUS_TYPES.lost) {
-      alert('Lost!');
-    }
-    if (this.props.status === STATUS_TYPES.won) {
-      alert('Won!');
-    }
+    const { actions } = this.props;
 
-    return <View style={styles.board}>{this.getBoard()}</View>
+    return <View style={styles.container}>
+      <Popup
+        validateAction={ () => this.props.actions.initAction() }
+        buttonText={ 'RETRY' }
+        visible={ this.props.board.status !== STATUS_TYPES.idle }
+        message={ this.props.board.status === STATUS_TYPES.won ? 'You Win!' : 'You Lose...' } />
+      <View style={styles.board}>{this.getBoard()}</View>
+    </View>
   }
 };
 
 const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
     board: {
       flex: 1,
       flexDirection: 'row',
@@ -57,4 +68,8 @@ const mapStateToProps = (state, props) => ({
   status: state.board.status,
 });
 
-export default connect(mapStateToProps)(BoardC);
+const mapDispatchToProps = (dispatch) => ({
+  actions: bindActionCreators(actions, dispatch)
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(BoardC);

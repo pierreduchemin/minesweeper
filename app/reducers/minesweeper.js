@@ -51,7 +51,6 @@ const click = (board: Board, x: number, y: number): Board => {
   }
   if (board.getRemaining().length === N_MINES) {
     board.status = STATUS_TYPES.won;
-    board.reveal();
   }
 
   return board;
