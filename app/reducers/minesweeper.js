@@ -6,11 +6,11 @@ import { INIT, IDLE, CLICK } from '../actions/actionTypes';
 import { combineReducers } from 'redux';
 
 const init = () : Board => {
-  var a = new Array<Array<Square>>(BOARD_SIZE);
-  for (var i = 0; i < BOARD_SIZE; i++) {
-      a[i] = new Array(BOARD_SIZE);
-      for (var j = 0; j < BOARD_SIZE; j++) {
-          a[i][j] = new Square(i, j, HIDDEN_TYPES.hidden, SHOWN_TYPES.empty);
+  var a = [];
+  for (var x = 0; x < BOARD_SIZE; x++) {
+      a[x] = [];
+      for (var y = 0; y < BOARD_SIZE; y++) {
+          a[x].push(new Square(x, y, HIDDEN_TYPES.hidden, SHOWN_TYPES.empty));
       }
   }
 
@@ -37,16 +37,52 @@ const init = () : Board => {
   return b;
 };
 
-const boardReducer = (state: Board = init(), action): Board => {
+const click = (board: Board, x: number, y: number): Board => {
+  board.squares[x][y].hidden = false;
+
+  // unhide all 0 value neighbours
+  if (board.squares[x][y].value === 0) {
+    unhide(board, x, y);
+  }
+
+  // todo: check lost/won
+
+  return board;
+};
+
+const unhide = (board: Board, x: number, y: number) => {
+  const square = board.squares[x][y];
+  if (board !== undefined && square !== undefined) {
+    board.getNeighbours(square).filter(s => s.hidden).forEach(function(s) {
+      s.hidden = false;
+      if (s.value === 0 && s.shownType !== SHOWN_TYPES.mine) {
+        unhide(board, s.x, s.y);
+      }
+    });
+  }
+}
+
+export type State = {
+  board: Board,
+  currentSquare: Square,
+};
+
+const boardReducer = (state: State = { board: init(), currentSquare: {} }, action: Object): Object => {
   switch (action.type) {
     case INIT:
-      return init();
-    case IDLE:
-      return state;
+      return {
+        ...state,
+        board: init(),
+      };
+    case CLICK:
+      var b = click(state.board, action.x, action.y);
+      return {
+        ...state,
+        board: b,
+        currentSquare: {},
+      };
 /*    case 'FLAG':
       return addFlag(state, x, y);
-    case 'CLICK':
-      return click(state, x, y);
     case 'NO_MINE':
       return state;
     case 'LOST':
@@ -58,6 +94,4 @@ const boardReducer = (state: Board = init(), action): Board => {
   }
 };
 
-export default combineReducers({
-  board: boardReducer,
-});
+export default boardReducer;
