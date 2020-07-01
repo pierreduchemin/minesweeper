@@ -2,9 +2,8 @@
 
 export const BOARD_SIZE = 8;
 export const N_MINES = 10;
-
-export const hiddenTypes = Object.freeze({"hidden":0, "flag":1})
-export const shownTypes = Object.freeze({"empty":0, "mine":1})
+export const HIDDEN_TYPES = Object.freeze({"hidden":0, "flag":1})
+export const SHOWN_TYPES = Object.freeze({"empty":0, "mine":1})
 
 const isValid = (x: number, y: number): boolean => {
   return x >= 0 && y >= 0 && x < BOARD_SIZE && y < BOARD_SIZE;
@@ -13,9 +12,10 @@ const isValid = (x: number, y: number): boolean => {
 export class Square {
     +x: number;
     +y: number;
-    value: number;
     +hiddenType: number;
     shownType: number;
+    value: number;
+    hidden: boolean;
 
     constructor(x: number, y: number, hiddenType: number, shownType: number) {
       this.x = x;
@@ -23,6 +23,7 @@ export class Square {
       this.value = 0;
       this.hiddenType = hiddenType;
       this.shownType = shownType;
+      this.hidden = true;
     }
 }
 
@@ -39,7 +40,7 @@ export class Board {
     var result = [];
     for (var i = 0; i < BOARD_SIZE; i++) {
       for (var j = 0; j < BOARD_SIZE; j++) {
-        if (this.squares[i][j].shownType === shownTypes.mine) {
+        if (this.squares[i][j].shownType === SHOWN_TYPES.mine) {
           result.push(this.squares[i][j]);
         }
       }

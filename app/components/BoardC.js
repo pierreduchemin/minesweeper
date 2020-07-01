@@ -3,10 +3,9 @@
 import React, { type Node } from 'react';
 import { Text, View, StyleSheet, Dimensions } from "react-native";
 import { connect } from 'react-redux';
-import { shownTypes, hiddenTypes, type Board, type Square } from '../types/minesweeper';
+import { type Board, type Square } from '../types/minesweeper';
+import SquareC from './SquareC';
 import board from '../reducers/minesweeper';
-
-const deviceWidth = Dimensions.get('window').width;
 
 const getBoard = (board: Board) => {
   let content = [];
@@ -20,10 +19,7 @@ const getRow = (board: Board, rowIndex: number) => {
   let content = [];
   for (let colIndex = 0; colIndex < board.squares.length; colIndex++) {
     const item = board.squares[rowIndex][colIndex];
-    if (item.shownType === shownTypes.mine)
-      content.push(<View key={"s" + (rowIndex * board.size + content.length)} style={getStyles(deviceWidth / board.squares.length).mineSquare} />);
-    else
-      content.push(<View key={"s" + (rowIndex * board.size + content.length)} style={getStyles(deviceWidth / board.squares.length).emptySquare}><Text>{item.value}</Text></View>);
+    content.push(<SquareC key={"s" + (rowIndex * board.size + content.length)} square={item} />);
   }
   return content;
 };
@@ -32,37 +28,20 @@ export type Props = {
   board: Board,
 };
 
-class BoardC extends React.Component<Props> {
-  render() {
+const BoardC = (props: Props) => {
     return (
-      <View style={getStyles(deviceWidth / board.length).board}>{getBoard(this.props.board)}</View>
+      <View style={styles.board}>{getBoard(props.board)}</View>
     )
-  }
 };
 
-const getStyles = (squareWidth: number) => {
-  return StyleSheet.create({
+const styles = StyleSheet.create({
     board: {
       flex: 1,
       flexDirection: 'row',
       justifyContent: 'center',
       alignItems: 'center',
     },
-    emptySquare: {
-      width: squareWidth, 
-      height: squareWidth, 
-      backgroundColor: 'powderblue', 
-      borderColor: 'grey',
-      borderWidth: 2,
-    },
-    mineSquare: {
-      width: squareWidth, 
-      height: squareWidth, 
-      backgroundColor: 'red', 
-      borderColor: 'grey',
-      borderWidth: 2,
-    },
-})};
+});
 
 const mapStateToProps = (state) => {
   const { board } = state

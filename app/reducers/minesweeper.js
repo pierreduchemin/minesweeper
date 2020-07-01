@@ -1,8 +1,8 @@
 // @flow
 
-import { hiddenTypes, shownTypes, BOARD_SIZE, N_MINES, Board, Square } from '../types/minesweeper';
+import { HIDDEN_TYPES, SHOWN_TYPES, BOARD_SIZE, N_MINES, Board, Square } from '../types/minesweeper';
 import { create } from 'react-test-renderer';
-import { CLICK } from '../actions/actionTypes';
+import { INIT, IDLE, CLICK } from '../actions/actionTypes';
 import { combineReducers } from 'redux';
 
 const init = () : Board => {
@@ -10,7 +10,7 @@ const init = () : Board => {
   for (var i = 0; i < BOARD_SIZE; i++) {
       a[i] = new Array(BOARD_SIZE);
       for (var j = 0; j < BOARD_SIZE; j++) {
-          a[i][j] = new Square(i, j, hiddenTypes.hidden, shownTypes.empty);
+          a[i][j] = new Square(i, j, HIDDEN_TYPES.hidden, SHOWN_TYPES.empty);
       }
   }
 
@@ -18,8 +18,8 @@ const init = () : Board => {
   do {
     x = Math.floor(Math.random() * BOARD_SIZE);
     y = Math.floor(Math.random() * BOARD_SIZE);
-    if (a[x][y] === undefined || a[x][y].shownType === shownTypes.empty) {
-      a[x][y].shownType = shownTypes.mine;
+    if (a[x][y] === undefined || a[x][y].shownType === SHOWN_TYPES.empty) {
+      a[x][y].shownType = SHOWN_TYPES.mine;
       nMines++;
     }
   } while (nMines < N_MINES);
@@ -28,7 +28,7 @@ const init = () : Board => {
 
   b.getMines().forEach(function(m) {
     b.getNeighbours(m).forEach(function(n) {
-      if (n.shownType !== shownTypes.mine) {
+      if (n.shownType !== SHOWN_TYPES.mine) {
         n.value++;
       }
     });
@@ -39,9 +39,9 @@ const init = () : Board => {
 
 const boardReducer = (state: Board = init(), action): Board => {
   switch (action.type) {
-    case 'INIT':
+    case INIT:
       return init();
-    case 'IDLE':
+    case IDLE:
       return state;
 /*    case 'FLAG':
       return addFlag(state, x, y);
