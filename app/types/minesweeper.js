@@ -29,12 +29,10 @@ export class Square {
 }
 
 export class Board {
-  +size: number;
   +squares: Array<Array<Square>>;
   status: number;
 
   constructor(squares: Array<Array<Square>>) {
-    this.size = BOARD_SIZE;  
     this.squares = squares;
     this.status = STATUS_TYPES.idle;
   }
