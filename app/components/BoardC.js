@@ -4,7 +4,7 @@ import React, { type Node, Component } from 'react';
 import { Text, View, StyleSheet, Dimensions } from "react-native";
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { type Board, type Square, STATUS_TYPES } from '../types/minesweeper';
+import { Board, Square, STATUS_TYPES, BOARD_SIZE } from '../types/minesweeper';
 import SquareC from './SquareC';
 import Popup from './Popup';
 import * as actions from '../actions/actions';
@@ -30,7 +30,7 @@ class BoardC extends Component<Props> {
     let content = [];
     for (let colIndex = 0; colIndex < this.props.board.squares.length; colIndex++) {
       const item = this.props.board.squares[rowIndex][colIndex];
-      content.push(<SquareC key={"s" + (rowIndex * this.props.board.size + content.length)} square={item} />);
+      content.push(<SquareC key={"s" + (rowIndex * BOARD_SIZE + content.length)} square={item} />);
     }
     return content;
   };
