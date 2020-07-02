@@ -31,10 +31,44 @@ export class Square {
 export class Board {
   +squares: Array<Array<Square>>;
   status: number;
+  isMinesInit: boolean;
 
-  constructor(squares: Array<Array<Square>>) {
+  constructor() {
+    var squares = [];
+    for (var x = 0; x < BOARD_SIZE; x++) {
+      squares[x] = [];
+        for (var y = 0; y < BOARD_SIZE; y++) {
+          squares[x].push(new Square(x, y, HIDDEN_TYPES.hidden, SHOWN_TYPES.empty));
+        }
+    }
     this.squares = squares;
     this.status = STATUS_TYPES.idle;
+    this.isMinesInit = false;
+  }
+
+  initMines(clickedX: number, clickedY: number) {
+    var x, y, nMines = 0;
+    do {
+      x = Math.floor(Math.random() * BOARD_SIZE);
+      y = Math.floor(Math.random() * BOARD_SIZE);
+      if (this.squares[x][y].hidden
+            && this.squares[x][y].shownType === SHOWN_TYPES.empty
+            && !this.isInNeighborhood(clickedX, clickedY, x, y)) {
+        this.squares[x][y].shownType = SHOWN_TYPES.mine;
+        nMines++;
+      }
+    } while (nMines < N_MINES);
+    
+    const self = this;
+    this.getMines().forEach(function(m) {
+      self.getNeighbours(m.x, m.y)
+      .filter(n => n.shownType !== SHOWN_TYPES.mine)
+      .forEach(function(n) {
+        n.value++;
+      });
+    });
+
+    this.isMinesInit = true;
   }
 
   getMines(): Array<Square> {
@@ -71,49 +105,45 @@ export class Board {
     }
   }
 
-  getNeighbours(square: Square): Array<Square> {
+  unhide (x: number, y: number) {
+    const self = this;
+    const square = this.squares[x][y];
+    if (square !== undefined) {
+      this.getNeighbours(square.x, square.y)
+      .filter(s => s.hidden)
+      .forEach(function(s) {
+        s.hidden = false;
+        if (s.value === 0 && s.shownType !== SHOWN_TYPES.mine) {
+          self.unhide(s.x, s.y);
+        }
+      });
+    }
+  };
+
+  getNeighbours(x: number, y: number): Array<Square> {
     var result = [];
-
-    var x = square.x - 1;
-    var y = square.y - 1;
-    if (isValid(x, y))
-      result.push(this.squares[x][y]);
-
-    x = square.x;
-    y = square.y - 1;
-    if (isValid(x, y))
-      result.push(this.squares[x][y]);
-
-    x = square.x + 1;
-    y = square.y - 1;
-    if (isValid(x, y))
-      result.push(this.squares[x][y]);
-
-    x = square.x - 1;
-    y = square.y;
-    if (isValid(x, y))
-      result.push(this.squares[x][y]);
-
-    x = square.x + 1;
-    y = square.y;
-    if (isValid(x, y))
-      result.push(this.squares[x][y]);
-
-    x = square.x - 1;
-    y = square.y + 1;
-    if (isValid(x, y))
-      result.push(this.squares[x][y]);
-
-    x = square.x;
-    y = square.y + 1;
-    if (isValid(x, y))
-      result.push(this.squares[x][y]);
-
-    x = square.x + 1;
-    y = square.y + 1;
-    if (isValid(x, y))
-      result.push(this.squares[x][y]);
-
+    for (var dx = -1; dx <= 1; dx++) {
+      for (var dy = -1; dy <= 1; dy++) {
+        var tempX = x + dx;
+        var tempY = y + dy;
+        if ((dx !== 0 || dy !== 0) && isValid(tempX, tempY)) {
+          result.push(this.squares[tempX][tempY]);
+        }
+      }
+    }
     return result;
+  }
+
+  isInNeighborhood(clickedX: number, clickedY: number, x: number, y: number): boolean {
+    for (var dx = -1; dx <= 1; dx++) {
+      for (var dy = -1; dy <= 1; dy++) {
+        var tempX = clickedX + dx;
+        var tempY = clickedY + dy;
+        if ((dx !== 0 || dy !== 0) && isValid(tempX, tempY) && (tempX === x || tempY === y)) {
+          return true;
+        }
+      }
+    }
+    return false;
   }
 };
