@@ -1,24 +1,24 @@
 // @flow
 
-import { INIT, FLAG, CLICK } from './actionTypes';
+import * as types from './actionTypes';
 
-export const INIT_ACTTION = () => {
+export const INIT_ACTION = () => {
     return {
-        type: INIT
+        type: types.INIT
     };
 };
 
 export const FLAG_ACTION = (x: Number, y: number) => {
     return {
-        type: FLAG,
+        type: types.FLAG,
         x,
         y
     };
 };
-export const CLICK_ACTION = (x: Number, y: number) => {
+export const clickAction = (x: Number, y: number) => {
     return {
-        type: CLICK,
-        x,
-        y
+        type: types.CLICK,
+        x: x,
+        y: y
     };
 };

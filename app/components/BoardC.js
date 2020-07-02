@@ -1,37 +1,39 @@
 // @flow
 
-import React, { type Node } from 'react';
+import React, { type Node, Component } from 'react';
 import { Text, View, StyleSheet, Dimensions } from "react-native";
 import { connect } from 'react-redux';
 import { type Board, type Square } from '../types/minesweeper';
 import SquareC from './SquareC';
 import board from '../reducers/minesweeper';
 
-const getBoard = (board: Board) => {
-  let content = [];
-  for (let rowIndex = 0; rowIndex < board.squares.length; rowIndex++) {
-    content.push(<View key={"r" + rowIndex}>{getRow(board, rowIndex)}</View>);
-  }
-  return content;
-};
-
-const getRow = (board: Board, rowIndex: number) => {
-  let content = [];
-  for (let colIndex = 0; colIndex < board.squares.length; colIndex++) {
-    const item = board.squares[rowIndex][colIndex];
-    content.push(<SquareC key={"s" + (rowIndex * board.size + content.length)} square={item} />);
-  }
-  return content;
-};
-
 export type Props = {
   board: Board,
+  square: Square,
 };
 
-const BoardC = (props: Props) => {
-    return (
-      <View style={styles.board}>{getBoard(props.board)}</View>
-    )
+class BoardC extends Component<Props> {
+
+  getBoard = () => {
+    let content = [];
+    for (let rowIndex = 0; rowIndex < this.props.board.squares.length; rowIndex++) {
+      content.push(<View key={"r" + rowIndex}>{this.getRow(rowIndex)}</View>);
+    }
+    return content;
+  };
+  
+  getRow = (rowIndex: number) => {
+    let content = [];
+    for (let colIndex = 0; colIndex < this.props.board.squares.length; colIndex++) {
+      const item = this.props.board.squares[rowIndex][colIndex];
+      content.push(<SquareC key={"s" + (rowIndex * this.props.board.size + content.length)} square={item} />);
+    }
+    return content;
+  };
+
+  render = () => {
+    return <View style={styles.board}>{this.getBoard()}</View>
+  }
 };
 
 const styles = StyleSheet.create({
@@ -43,9 +45,9 @@ const styles = StyleSheet.create({
     },
 });
 
-const mapStateToProps = (state) => {
-  const { board } = state
-  return { board }
-};
+const mapStateToProps = (state, props) => ({
+  board: state.board,
+  currentSquare: state.currentSquare,
+});
 
 export default connect(mapStateToProps)(BoardC);

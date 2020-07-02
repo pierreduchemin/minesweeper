@@ -1,35 +1,50 @@
 // @flow
 
 import React, { type Node, Component } from 'react';
-import { View, Text, Image, StyleSheet, Dimensions, ScrollView } from "react-native";
-import { Square, SHOWN_TYPES, HIDDEN_TYPES } from '../types/minesweeper';
+import { TouchableOpacity, View, Text, Image, StyleSheet, Dimensions, ScrollView } from "react-native";
+import { Square, SHOWN_TYPES, HIDDEN_TYPES, Board } from '../types/minesweeper';
 import { BOARD_SIZE } from '../types/minesweeper';
+import { CLICK } from '../actions/actionTypes';
 import { connect } from 'react-redux';
 import Icon from '../assets/mine.js';
+
+import { bindActionCreators } from 'redux';
+import * as actions from '../actions/actions';
+import * as types from '../actions/actionTypes';
 
 const deviceWidth = Dimensions.get('window').width;
 
 export type Props = {
+  board: Board,
+  square: Square,
+  actions: Object,
+};
+
+export type State = {
   square: Square,
 };
 
-class SquareC extends Component<Props> {
+class SquareC extends Component<Props, State> {
   
   render = () => {
     const { square } = this.props;
-
     // hidden by default
-    let result = <View style={getStyles(deviceWidth / BOARD_SIZE).hiddenSquare} />;
+    let result = <TouchableOpacity activeOpacity = { .5 } onPress={ () => this.props.actions.clickAction(square.x, square.y) }>
+      <View style={getStyles(deviceWidth / BOARD_SIZE).hiddenSquare} />
+    </TouchableOpacity>;
+
     if (square.hidden) {
       if (square.hiddenType === HIDDEN_TYPES.flag) {
-        result = (<View style={getStyles(deviceWidth / BOARD_SIZE).hiddenSquare} />);
+        result = <View style={getStyles(deviceWidth / BOARD_SIZE).hiddenSquare} />;
       }
     } else {
       if (square.shownType === SHOWN_TYPES.empty) {
-        result = (<View style={getStyles(deviceWidth / BOARD_SIZE).emptySquare}><Text style={{textAlign: 'center'}}>{square.value > 0 ? square.value : ""}</Text></View>);
+        result = <View style={getStyles(deviceWidth / BOARD_SIZE).emptySquare}>
+          <Text style={{textAlign: 'center'}}>{square.value > 0 ? square.value : ""}</Text>
+        </View>;
       }
       if (square.shownType === SHOWN_TYPES.mine) {
-        result = (<View style={getStyles(deviceWidth / BOARD_SIZE).mineSquare} />);
+        result = <View style={getStyles(deviceWidth / BOARD_SIZE).mineSquare} />;
       }
     }
     return result;
@@ -64,4 +79,15 @@ const getStyles = (squareWidth: number) => {
     },
 })};
 
-export default SquareC;
+const mapStateToProps = (state, props) => {
+  return {
+    board: state.board,
+    currentSquare: state.currentSquare,
+  };
+};
+
+const mapDispatchToProps = (dispatch) => ({
+  actions: bindActionCreators(actions, dispatch)
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(SquareC);
