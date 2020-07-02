@@ -2,7 +2,7 @@
 
 import * as types from './actionTypes';
 
-export const INIT_ACTION = () => {
+export const initAction = () => {
   return {
     type: types.INIT
   };
