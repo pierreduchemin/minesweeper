@@ -8,7 +8,7 @@ export const INIT_ACTION = () => {
     };
 };
 
-export const FLAG_ACTION = (x: Number, y: number) => {
+export const toggleFlagAction = (x: Number, y: number) => {
     return {
         type: types.FLAG,
         x,

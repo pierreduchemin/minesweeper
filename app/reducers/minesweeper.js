@@ -2,7 +2,7 @@
 
 import { HIDDEN_TYPES, SHOWN_TYPES, BOARD_SIZE, N_MINES, Board, Square, STATUS_TYPES } from '../types/minesweeper';
 import { create } from 'react-test-renderer';
-import { INIT, IDLE, CLICK } from '../actions/actionTypes';
+import { INIT, CLICK, FLAG } from '../actions/actionTypes';
 import { combineReducers } from 'redux';
 
 const init = () : Board => {
@@ -67,7 +67,17 @@ const unhide = (board: Board, x: number, y: number) => {
       }
     });
   }
-}
+};
+
+const toggleFlag = (board: Board, x: number, y: number): Board => {
+  const square = board.squares[x][y];
+  if (square.hiddenType === HIDDEN_TYPES.flag) {
+    square.hiddenType = HIDDEN_TYPES.hidden;
+  } else {
+    square.hiddenType = HIDDEN_TYPES.flag;
+  }
+  return board;
+};
 
 export type State = {
   board: Board,
@@ -87,9 +97,13 @@ const boardReducer = (state: State = { board: init() }, action: Object): Object 
         board: b,
         currentSquare: {},
       };
-/*    case 'FLAG':
-      return addFlag(state, x, y);
-*/  default:
+    case FLAG:
+      return {
+        ...state,
+        board: toggleFlag(state.board, action.x, action.y),
+        currentSquare: {},
+      };
+    default:
       return state;
   }
 };
