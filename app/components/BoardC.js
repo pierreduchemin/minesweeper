@@ -3,13 +3,13 @@
 import React, { type Node, Component } from 'react';
 import { Text, View, StyleSheet, Dimensions } from "react-native";
 import { connect } from 'react-redux';
-import { type Board, type Square } from '../types/minesweeper';
+import { type Board, type Square, STATUS_TYPES } from '../types/minesweeper';
 import SquareC from './SquareC';
 import board from '../reducers/minesweeper';
 
 export type Props = {
   board: Board,
-  square: Square,
+  status: number,
 };
 
 class BoardC extends Component<Props> {
@@ -32,6 +32,13 @@ class BoardC extends Component<Props> {
   };
 
   render = () => {
+    if (this.props.status === STATUS_TYPES.lost) {
+      alert('Lost!');
+    }
+    if (this.props.status === STATUS_TYPES.won) {
+      alert('Won!');
+    }
+
     return <View style={styles.board}>{this.getBoard()}</View>
   }
 };
@@ -47,7 +54,7 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = (state, props) => ({
   board: state.board,
-  currentSquare: state.currentSquare,
+  status: state.board.status,
 });
 
 export default connect(mapStateToProps)(BoardC);

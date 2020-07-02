@@ -41,14 +41,36 @@ export class Board {
 
   getMines(): Array<Square> {
     var result = [];
-    for (var i = 0; i < BOARD_SIZE; i++) {
-      for (var j = 0; j < BOARD_SIZE; j++) {
-        if (this.squares[i][j].shownType === SHOWN_TYPES.mine) {
-          result.push(this.squares[i][j]);
+    for (var x = 0; x < BOARD_SIZE; x++) {
+      for (var y = 0; y < BOARD_SIZE; y++) {
+        if (this.squares[x][y].shownType === SHOWN_TYPES.mine) {
+          result.push(this.squares[x][y]);
         }
       }
     }
     return result;
+  }
+
+  getRemaining(): Array<Square> {
+    var result = [];
+    for (var x = 0; x < BOARD_SIZE; x++) {
+      for (var y = 0; y < BOARD_SIZE; y++) {
+        if (this.squares[x][y].hidden) {
+          result.push(this.squares[x][y]);
+        }
+      }
+    }
+    return result;
+  }
+
+  reveal() {
+    for (var x = 0; x < BOARD_SIZE; x++) {
+      for (var y = 0; y < BOARD_SIZE; y++) {
+        if (this.squares[x][y].hidden) {
+          this.squares[x][y].hidden = false;
+        }
+      }
+    }
   }
 
   getNeighbours(square: Square): Array<Square> {
