@@ -3,22 +3,22 @@
 import * as types from './actionTypes';
 
 export const INIT_ACTION = () => {
-    return {
-        type: types.INIT
-    };
+  return {
+    type: types.INIT
+  };
 };
 
 export const toggleFlagAction = (x: Number, y: number) => {
-    return {
-        type: types.FLAG,
-        x,
-        y
-    };
+  return {
+    type: types.FLAG,
+    x,
+    y
+  };
 };
 export const clickAction = (x: Number, y: number) => {
-    return {
-        type: types.CLICK,
-        x: x,
-        y: y
-    };
+  return {
+    type: types.CLICK,
+    x: x,
+    y: y
+  };
 };

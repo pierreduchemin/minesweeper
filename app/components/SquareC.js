@@ -35,7 +35,16 @@ class SquareC extends Component<Props, State> {
 
     if (square.hidden) {
       if (square.hiddenType === HIDDEN_TYPES.flag) {
-        result = <View style={getStyles(deviceWidth / BOARD_SIZE).flagSquare} />;
+        result = <TouchableOpacity
+            activeOpacity = { .5 }
+            onLongPress={ () => actions.toggleFlagAction(square.x, square.y) }>
+          <View style={getStyles(deviceWidth / BOARD_SIZE).flagSquare}>
+            <Image
+              source={require('../assets/flag.png')}
+              resizeMode={'center'}
+              style={styles.image} />
+          </View>
+        </TouchableOpacity>;
       }
     } else {
       if (square.shownType === SHOWN_TYPES.empty) {
@@ -44,7 +53,12 @@ class SquareC extends Component<Props, State> {
         </View>;
       }
       if (square.shownType === SHOWN_TYPES.mine) {
-        result = <View style={getStyles(deviceWidth / BOARD_SIZE).mineSquare} />;
+        result = <View style={getStyles(deviceWidth / BOARD_SIZE).mineSquare}>
+          <Image
+            source={require('../assets/mine.png')}
+            resizeMode={'center'}
+            style={styles.image} />
+        </View>;
       }
     }
     return result;
@@ -64,7 +78,7 @@ const getStyles = (squareWidth: number) => {
     flagSquare: {
       width: squareWidth, 
       height: squareWidth, 
-      backgroundColor: 'yellow', 
+      backgroundColor: 'orange', 
       borderColor: 'grey',
       borderWidth: 2,
       justifyContent: 'center',
@@ -86,6 +100,13 @@ const getStyles = (squareWidth: number) => {
       justifyContent: 'center',
     },
 })};
+
+const styles = StyleSheet.create({
+  image: {
+    margin: -4,
+    paddingLeft: 10,
+  }
+});
 
 const mapStateToProps = (state, props) => {
   return {
