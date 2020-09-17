@@ -11,7 +11,7 @@ npm i
 ## Start React Native server
 
 ```shell
-npm run android
+npm run start
 ```
 
 ## Start android app
